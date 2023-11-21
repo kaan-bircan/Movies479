@@ -110,23 +110,11 @@ namespace MVC.Controllers
         // GET: Movies/Delete/5
         public IActionResult Delete(int id)
         {
-            MovieModel movie = _movieService.Query().SingleOrDefault(s => s.Id == id);  // TODO: Add get item service logic here
-			if (movie == null)
-            {
-                return NotFound();
-            }
-            return View(movie);
+            _movieService.Delete(id);
+            TempData["Message"] = "Movie deleted successfully.";
+            return RedirectToAction(nameof(Index));
         }
 
-        // POST: Movies/Delete
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
-        {
-			// TODO: Add delete service logic here
-			_movieService.Delete(id);
-			TempData["Message"] = "Movie deleted successfully.";
-			return RedirectToAction(nameof(Index));
-		}
+     
 	}
 }
