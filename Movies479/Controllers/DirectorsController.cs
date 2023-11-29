@@ -108,8 +108,8 @@ namespace MVC.Controllers
 
             if (result)
                 TempData["Message"] = "Director deleted successfully.";
-
-            TempData["Message"] = "Director cannot be deleted because it has Movies.";
+            else
+                TempData["Message"] = "Director cannot be deleted because it has Movies.";
             return RedirectToAction(nameof(Index));
         }
 
