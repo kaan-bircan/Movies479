@@ -51,6 +51,9 @@ namespace Business.Services
             Director entity = _db.Directors.SingleOrDefault(s => s.Id == id);
             if (entity is null)
                 return false;
+
+            if (existingEntity.Users.Any())
+                return new ErrorResult("Role can't be deleted because it has users!");
             _db.Directors.Remove(entity);
             _db.SaveChanges();
             return true;
