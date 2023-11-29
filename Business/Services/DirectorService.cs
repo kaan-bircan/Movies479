@@ -83,6 +83,7 @@ namespace Business.Services
 			existingEntity.Name = model.Name;
 			existingEntity.Surname = model.Surname;
 			existingEntity.IsRetired = model.IsRetired;
+			existingEntity.BirthDate = model.BirthDate;
 
             _db.Directors.Update(existingEntity);
             _db.SaveChanges();
