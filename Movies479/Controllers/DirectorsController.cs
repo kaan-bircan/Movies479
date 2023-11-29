@@ -104,8 +104,12 @@ namespace MVC.Controllers
         // GET: Directors/Delete/5
         public IActionResult Delete(int id)
         {
-            _directorService.Delete(id);
-            TempData["Message"] = "Director deleted successfully.";
+            bool result = _directorService.Delete(id);
+
+            if (result)
+                TempData["Message"] = "Director deleted successfully.";
+
+            TempData["Message"] = "Director cannot be deleted because it has Movies.";
             return RedirectToAction(nameof(Index));
         }
 

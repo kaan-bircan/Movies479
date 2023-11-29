@@ -1,6 +1,7 @@
 ﻿using Business.Models;
 using DataAccess.Contexts;
 using DataAccess.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,14 +49,17 @@ namespace Business.Services
 
 		public bool Delete(int id)
 		{
-            Director entity = _db.Directors.SingleOrDefault(s => s.Id == id);
-            if (entity is null)
+            Director entity = _db.Directors.Include(d => d.Movies).SingleOrDefault(s => s.Id == id);
+          
+			if (entity is null)
                 return false;
 
-            if (existingEntity.Users.Any())
-                return new ErrorResult("Role can't be deleted because it has users!");
-            _db.Directors.Remove(entity);
+            if (entity.Movies.Any())
+				return false;
+        
+			_db.Directors.Remove(entity);
             _db.SaveChanges();
+			
             return true;
         }
 
