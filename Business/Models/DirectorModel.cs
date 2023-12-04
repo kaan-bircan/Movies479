@@ -1,4 +1,5 @@
 ﻿#nullable disable
+using DataAccess.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,10 +10,9 @@ using System.Threading.Tasks;
 
 namespace Business.Models
 {
-	public class DirectorModel
+	public class DirectorModel : Record
 	{
 
-		public int Id { get; set; }
 		[Required]
 		[StringLength(50)]
 		public string Name { get; set; }
