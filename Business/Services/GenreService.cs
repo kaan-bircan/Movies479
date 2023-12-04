@@ -80,8 +80,7 @@ namespace Business.Services
             {
                 // model - entity property assignments
                 Id = e.Id,
-                Name = e.Name,
-                GenreOutput = e.Id.ToString()
+                Name = e.Name
             }); ;
         }
 

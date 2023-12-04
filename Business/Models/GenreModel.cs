@@ -16,7 +16,5 @@ namespace Business.Models
         [StringLength(75)]
         public string Name { get; set; }
 
-        [DisplayName("Genre Id")]
-        public string GenreOutput { get; set; }
     }
 }
