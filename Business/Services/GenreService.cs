@@ -55,7 +55,7 @@ namespace Business.Services
 
                 Id = model.Id,
                 Name = model.Name,
-                Guid = model.Guid.ToString()
+                
             };
 
             _db.Genres.Add(entity);
