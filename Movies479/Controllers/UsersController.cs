@@ -112,21 +112,10 @@ namespace MVC.Controllers
         // GET: Users/Delete/5
         public IActionResult Delete(int id)
         {
-            UserModel user = _userService.Query().SingleOrDefault(u => u.Id == id);// TODO: Add get item service logic here
-            if (user == null)
-            {
-                return NotFound();
-            }
-            return View(user);
-        }
-
-        // POST: Users/Delete
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
-        {
-            // TODO: Add delete service logic here
+            var result = _userService.Delete(id);
+            TempData["Message"] = "User deleted successfuly";
             return RedirectToAction(nameof(Index));
         }
+
 	}
 }
