@@ -124,6 +124,25 @@ namespace DataAccess.Migrations
                     b.ToTable("MovieGenres");
                 });
 
+            modelBuilder.Entity("DataAccess.Entities.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("DataAccess.Entities.Movie", b =>
                 {
                     b.HasOne("DataAccess.Entities.Director", "Director")
