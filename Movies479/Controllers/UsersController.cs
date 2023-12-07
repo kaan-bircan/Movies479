@@ -34,7 +34,7 @@ namespace MVC.Controllers
         // GET: Users/Details/5
         public IActionResult Details(int id)
         {
-            UserModel user = null; // TODO: Add get item service logic here
+            UserModel user = _userService.Query().SingleOrDefault(u => u.Id == id);  // TODO: Add get item service logic here
             if (user == null)
             {
                 return NotFound();
@@ -58,22 +58,31 @@ namespace MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                // TODO: Add insert service logic here
-                return RedirectToAction(nameof(Index));
+
+                bool result = _userService.Add(user);
+                if (result)
+                {
+                    // Way 1:
+                    //return RedirectToAction("GetList");
+                    // Way 2:
+                    TempData["Message"] = "User added";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                ModelState.AddModelError("", "User could not be added");
             }
-            // TODO: Add get related items service logic here to set ViewData if necessary and update null parameter in SelectList with these items
             return View(user);
         }
 
         // GET: Users/Edit/5
         public IActionResult Edit(int id)
         {
-            UserModel user = null; // TODO: Add get item service logic here
+            UserModel user = _userService.Query().SingleOrDefault(u => u.Id == id);
             if (user == null)
             {
-                return NotFound();
+                return NotFound(); // 404 HTTP Status Code
             }
-            // TODO: Add get related items service logic here to set ViewData if necessary and update null parameter in SelectList with these items
+        
             return View(user);
         }
 
@@ -86,17 +95,24 @@ namespace MVC.Controllers
         {
             if (ModelState.IsValid)
             {
+                bool result = _userService.Update(user);
+                if (result)
+                {
+                    TempData["Message"] = "User information changed";
+                    return RedirectToAction(nameof(Index));
+                }
+                ModelState.AddModelError("", "User Information could not be changed");
                 // TODO: Add update service logic here
                 return RedirectToAction(nameof(Index));
             }
-            // TODO: Add get related items service logic here to set ViewData if necessary and update null parameter in SelectList with these items
+           
             return View(user);
         }
 
         // GET: Users/Delete/5
         public IActionResult Delete(int id)
         {
-            UserModel user = null; // TODO: Add get item service logic here
+            UserModel user = _userService.Query().SingleOrDefault(u => u.Id == id);// TODO: Add get item service logic here
             if (user == null)
             {
                 return NotFound();
