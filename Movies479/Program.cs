@@ -1,3 +1,4 @@
+using Business;
 using Business.Services;
 using DataAccess.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,8 @@ builder.Services.AddDbContext<Db>(options => options.UseSqlServer("server=(local
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<IDirectorService, DirectorService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
