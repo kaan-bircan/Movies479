@@ -23,7 +23,7 @@ builder.Services
 	{
 		config.LoginPath = "/Account/Login";//giriþ yapýlmadan iþlem yapýlýrsa yönlendir
 		config.AccessDeniedPath = "/Account/AccessDenied";//giriþ yaptýktan sonra yetki dýþý iþlem
-		config.ExpireTimeSpan = TimeSpan.FromMinutes(15);//cookie 30 dakika kullanýlabilir,iþlem yapýlýrsa 30 yenilenir
+		config.ExpireTimeSpan = TimeSpan.FromMinutes(15);
 		config.SlidingExpiration = true;
 	});
 #endregion
