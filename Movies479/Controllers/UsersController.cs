@@ -10,6 +10,9 @@ using DataAccess.Contexts;
 using DataAccess.Entities;
 using Business;
 using Business.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 
 //Generated from Custom Template.
 namespace MVC.Controllers
@@ -117,5 +120,47 @@ namespace MVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-	}
+        [HttpGet("Account/{action}")]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost("Account/{action}"), ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(UserModel user)
+        {
+            var existingUser = _userService.Query().SingleOrDefault(u => u.Name == user.Name && u.Password == user.Password);
+            if (existingUser == null)
+            {
+                ModelState.AddModelError("", "Invalid user name or password");
+                return View();
+            }
+            List<Claim> userClaims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Name, existingUser.Name),
+               
+            };
+            var userIdentity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var userPrincipal = new ClaimsPrincipal(userIdentity);
+
+            await HttpContext.SignInAsync(userPrincipal);
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet("Users/{action}")]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet("Users/{action}")]
+        public IActionResult AccessDenied()
+        {
+            return View("Error", "No access to this operation");
+        }
+
+    }
 }
+

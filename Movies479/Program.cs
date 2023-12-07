@@ -1,6 +1,7 @@
 using Business;
 using Business.Services;
 using DataAccess.Contexts;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,18 @@ builder.Services.AddScoped<IUserService, UserService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+#region
+builder.Services
+	.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+	.AddCookie(config =>
+	{
+		config.LoginPath = "/Account/Login";//giriþ yapýlmadan iþlem yapýlýrsa yönlendir
+		config.AccessDeniedPath = "/Account/AccessDenied";//giriþ yaptýktan sonra yetki dýþý iþlem
+		config.ExpireTimeSpan = TimeSpan.FromMinutes(15);//cookie 30 dakika kullanýlabilir,iþlem yapýlýrsa 30 yenilenir
+		config.SlidingExpiration = true;
+	});
+#endregion
 
 var app = builder.Build();
 
@@ -30,6 +43,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
