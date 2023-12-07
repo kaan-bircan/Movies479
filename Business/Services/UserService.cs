@@ -43,12 +43,7 @@ public class UserService : IUserService // UserService is a IUserService (UserSe
 
     public bool Add(UserModel model)
     {
-        // Way 1: Data case sensitivity can be simply eliminated by using ToUpper or ToLower methods in both sides,
-        // Trim method can be used to remove the white spaces from the beginning and the end of the data.
-        //User existingUser = _db.Users.SingleOrDefault(u => u.UserName.ToUpper() == model.UserName.ToUpper().Trim());
-        //if (existingUser is not null)
-        //    return new ErrorResult("User with the same user name already exists!");
-        // Way 2:
+       
         if (_db.Users.Any(u => u.Name.ToUpper() == model.Name.ToUpper().Trim()))
             return false;
 
@@ -81,13 +76,10 @@ public class UserService : IUserService // UserService is a IUserService (UserSe
         var user = _db.Users.SingleOrDefault(u => u.Id == model.Id);
 
         // then updating the entity properties
-        if (user is not null)
-        {
-            user.IsActive = model.IsActive;
-            user.UserName = model.UserName.Trim();
+        if (user is not null) { 
+       
+            user.Name = model.Name.Trim();
             user.Password = model.Password.Trim();
-            user.RoleId = model.RoleId ?? 0;
-            user.Status = model.Status;
 
             // updating the entity in the related db set
             _db.Users.Update(user);
@@ -95,46 +87,41 @@ public class UserService : IUserService // UserService is a IUserService (UserSe
             // changes in all of the db sets are commited to the database with Unit of Work
             _db.SaveChanges();
         }
-        return new SuccessResult("User updated successfully.");
+        return true;
     }
 
 
-    public Result Delete(int id)
+    public bool Delete(int id)
     {
-        var UserResourceEntities = _db.UserResources.Where(ur => ur.UserId == id).ToList();
+        var UserResourceEntities = _db.Users.Where(ur => ur.Id == id).ToList();
 
-        //foreach (var userResourceEntity in UserResourceEntities)
-        //{
-        //    _db.UserResources.Remove(userResourceEntity); 
-        //}
-
-        _db.UserResources.RemoveRange(UserResourceEntities);
+        _db.Users.RemoveRange(UserResourceEntities);
 
         var userEntity = _db.Users.SingleOrDefault(u => u.Id == id);
 
         if (userEntity is null)
         {
-            return new ErrorResult("User not found.");
+            return false;
         }
         _db.Users.RemoveRange(userEntity);
 
         _db.SaveChanges();
 
-        return new SuccessResult("User deleted successfuly.");
+        return true;
     }
 
-    public Result DeleteUser(int id)
+    public bool DeleteUser(int id)
     {
-        var userEntity = _db.Users.Include(u => u.UserResources).SingleOrDefault(u => u.Id == id);
+        var userEntity = _db.Users.SingleOrDefault(u => u.Id == id);
         if (userEntity is null)
         {
-            return new ErrorResult("User not found.");
+            return false;
         }
-        _db.UserResources.RemoveRange(userEntity.UserResources);
+        
         _db.Users.Remove(userEntity);
         _db.SaveChanges();
 
-        return new SuccessResult("User deleted successfuly.");
+        return true;
     }
 }
 
