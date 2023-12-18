@@ -1,4 +1,6 @@
 ﻿using Business.Models;
+using Business.Results;
+using Business.Results.Bases;
 using DataAccess.Contexts;
 using DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -8,11 +10,11 @@ namespace Business;
 public interface IUserService
 {
     IQueryable<UserModel> Query();
-    bool Add(UserModel model);
-    bool Update(UserModel model);
+    Result Add(UserModel model);
+    Result Update(UserModel model);
 
-    bool Delete(int id);
-    bool DeleteUser(int id);
+    Result Delete(int id);
+    Result DeleteUser(int id);
 }
 
 public class UserService : IUserService // UserService is a IUserService (UserService implements IUserService)
@@ -41,11 +43,11 @@ public class UserService : IUserService // UserService is a IUserService (UserSe
             });
     }
 
-    public bool Add(UserModel model)
+    public Result Add(UserModel model)
     {
-       
-        if (_db.Users.Any(u => u.Name.ToUpper() == model.Name.ToUpper().Trim()))
-            return false;
+        bool exist = _db.Users.Any(u => u.Name.ToUpper() == model.Name.ToUpper().Trim());
+        if (exist)
+            return new ErrorResult("User with the same user name already exists!");
 
         // entity creation from the model
         User user = new User()
@@ -62,15 +64,15 @@ public class UserService : IUserService // UserService is a IUserService (UserSe
         // changes in all of the db sets are commited to the database with Unit of Work
         _db.SaveChanges();
 
-        return true;
+        return new SuccessResult("User added successfuly");
     }
 
-    public bool Update(UserModel model)
+    public Result Update(UserModel model)
     {
-       
+
         var existingUsers = _db.Users.Where(u => u.Id != model.Id).ToList();
         if (existingUsers.Any(u => u.Name.Equals(model.Name.Trim(), StringComparison.OrdinalIgnoreCase)))
-            return false;
+            return new ErrorResult("User with the same user name already exists!");
 
         // first getting the entity to be updated from the db set
         var user = _db.Users.SingleOrDefault(u => u.Id == model.Id);
@@ -87,11 +89,11 @@ public class UserService : IUserService // UserService is a IUserService (UserSe
             // changes in all of the db sets are commited to the database with Unit of Work
             _db.SaveChanges();
         }
-        return true;
+        return new SuccessResult("User updated successfully.");
     }
 
 
-    public bool Delete(int id)
+    public Result Delete(int id)
     {
         var UserResourceEntities = _db.Users.Where(ur => ur.Id == id).ToList();
 
@@ -101,27 +103,29 @@ public class UserService : IUserService // UserService is a IUserService (UserSe
 
         if (userEntity is null)
         {
-            return false;
+            return new ErrorResult("User not found.");
         }
         _db.Users.RemoveRange(userEntity);
 
         _db.SaveChanges();
 
-        return true;
+        return new SuccessResult("User deleted successfuly.");
     }
 
-    public bool DeleteUser(int id)
+    public Result DeleteUser(int id)
     {
         var userEntity = _db.Users.SingleOrDefault(u => u.Id == id);
         if (userEntity is null)
         {
-            return false;
+            return new ErrorResult("User not found.");
         }
         
         _db.Users.Remove(userEntity);
         _db.SaveChanges();
 
-        return true;
+        return new SuccessResult("User deleted successfuly.");
     }
+
+   
 }
 

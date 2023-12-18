@@ -7,7 +7,7 @@
 }
 
 <h1>@ViewData["Title"]</h1>
-@if(TempData["Message"] is null)
+@if(TempData["Message"] is not null)
 {
     <p class="text-danger">@TempData["Message"]</p>
 }

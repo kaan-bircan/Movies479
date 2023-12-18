@@ -13,6 +13,7 @@ using Business.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
+using Business.Results.Bases;
 
 //Generated from Custom Template.
 namespace MVC.Controllers
@@ -62,19 +63,19 @@ namespace MVC.Controllers
             if (ModelState.IsValid)
             {
 
-                bool result = _userService.Add(user);
-                if (result)
+                Result result = _userService.Add(user);
+                if (result.IsSuccessful)
                 {
                     // Way 1:
                     //return RedirectToAction("GetList");
                     // Way 2:
-                    TempData["Message"] = "User added";
+                    TempData["Message"] = result.Message;
                     return RedirectToAction(nameof(Index));
                 }
 
-                ModelState.AddModelError("", "User could not be added");
+                ModelState.AddModelError("", result.Message);
             }
-            return View(user);
+            return RedirectToAction("Login", "Users"); ;
         }
 
         // GET: Users/Edit/5
@@ -98,13 +99,13 @@ namespace MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                bool result = _userService.Update(user);
-                if (result)
+                Result result = _userService.Update(user);
+                if (result.IsSuccessful)
                 {
-                    TempData["Message"] = "User information changed";
+                    TempData["Message"] = result.Message;
                     return RedirectToAction(nameof(Index));
                 }
-                ModelState.AddModelError("", "User Information could not be changed");
+                ModelState.AddModelError("", result.Message);
                 // TODO: Add update service logic here
                 return RedirectToAction(nameof(Index));
             }
@@ -116,7 +117,7 @@ namespace MVC.Controllers
         public IActionResult Delete(int id)
         {
             var result = _userService.Delete(id);
-            TempData["Message"] = "User deleted successfuly";
+            TempData["Message"] = result.Message;
             return RedirectToAction(nameof(Index));
         }
 
@@ -137,7 +138,7 @@ namespace MVC.Controllers
             }
             List<Claim> userClaims = new List<Claim>()
             {
-                new Claim(ClaimTypes.Name, existingUser.Name),
+                new Claim(ClaimTypes.Name, existingUser.Name)
                
             };
             var userIdentity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
